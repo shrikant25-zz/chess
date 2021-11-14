@@ -9,6 +9,7 @@ class Board():
         self.window = window
         self.square_dimensions = square_dimensions
         self.borderline = borderline
+        self.active_piece = None
         self.pieces_list = []
 
     def create_board(self):
@@ -21,7 +22,7 @@ class Board():
         # adding distance equal to borderline in starting points of sqaure shifts them enough to have place for a borderline 
         pygame.draw.rect(self.window, color[square_color], ((column * self.square_dimensions)+self.borderline, 
                 (row * self.square_dimensions)+self.borderline, self.square_dimensions, self.square_dimensions))
-    
+
     def create_pieces(self): 
         self.pieces_list.append(Pieces("white_pawn1", "a", "2"))
         self.pieces_list.append(Pieces("white_pawn2", "b", "2"))
@@ -70,6 +71,11 @@ class Board():
         piece_image = pygame.transform.scale(piece_image, (67, 67))
         self.window.blit(piece_image, position_on_chessboard)
 
+    def remove_piece_from_board(self, piece):
+        row, column = piece.get_row_column()
+        square_color = (('dark_silver', 'dark_red') [(row+column) & 1])
+        self.create_square(square_color, row, column)
+
     def is_there_piece_on_position(self, row, column):
         rank = 8 - int(row)
         file = ord(column) - 49
@@ -79,8 +85,8 @@ class Board():
         return False
     
     def get_piece_from_position(self, row, column):
-        rank = 8 - int(row)
-        file = ord(column) - 49
+        rank = str(8 - int(row))
+        file = chr(ord(str(column)) + 49)
         for piece in self.pieces_list:
             if piece.current_rank == rank and piece.current_file == file:
                 return piece
