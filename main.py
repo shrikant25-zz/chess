@@ -18,7 +18,7 @@ class Game:
         x, y = pos
         row = y // self.square_dimensions 
         col = x // self.square_dimensions 
-        if row > self.rows or col > self.col:
+        if row > self.rows or col > self.columns:
             return None
         return row, col
 
@@ -35,14 +35,22 @@ class Game:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     run = False
-                """ if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+                if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1 and board.active_piece == None:
                     pos = pygame.mouse.get_pos()
                     row, column = self.get_row_col_from_pos(pos)
                     if row != None and column!= None:
-                        piece_name =  piece.get_piecename_from_position(row, column)
-                if event.type == pygame.MOUSEBUTTONUP and event.button == 1 and piece_name != None:
-                    pass 
-                """
+                        piece =  board.get_piece_from_position(row, column)
+                        board.active_piece = piece
+                if event.type == pygame.MOUSEBUTTONUP and event.button == 1 and board.active_piece != None:
+                    pos = pygame.mouse.get_pos()
+                    row, column = self.get_row_col_from_pos(pos)
+                    if row != None and column!= None:
+                        board.remove_piece_from_board(board.active_piece)
+                        board.active_piece.update_piece_position(row, column)
+                        board.display_piece_on_board(board.active_piece.name, row, column)
+                        pygame.display.update() 
+                        board.active_piece = None
+                        
         pygame.quit()
 
 if __name__ == '__main__':
