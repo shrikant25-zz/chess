@@ -1,49 +1,51 @@
 import pygame
-
-# colors and thier hex values
-color = {'green' : [0, 128, 0],  
-         'red' : [255, 0, 0],
-         'dark_red' : [150, 0, 0], 
-         'black' : [0, 0, 0],  
-         'white' : [250, 250, 250],
-         'dark_grey' : [42, 53, 61],
-         'silver' : [200, 200, 200],
-         'blue' : [0, 0, 128],
-         'yellow' :[255, 255, 0] }  
-
-
-ROWS = COLUMNS = 8
-WIDTH = HEIGHT = 712
-SQUARE_DIMENSIONS = (WIDTH - 12) // ROWS # 87
-BORDERLINE = WIDTH // SQUARE_DIMENSIONS # 8
+from colors import color
+from chessboard import Board
 
 class Game:
-    def __init__(self):
+    def __init__(self, rows, columns, width, height, board_dimensions):
         pygame.init()
-        self.Window = pygame.display.set_mode((WIDTH, HEIGHT))
-        self.rungame()
+        self.rows = rows
+        self.columns = columns
+        self.width = width
+        self.height = height
+        self.board_dimensions = board_dimensions
+        self.square_dimensions = self.board_dimensions // self.rows 
+        self.borderline = self.width // self.square_dimensions
+        self.window = pygame.display.set_mode((self.width, self.height))
+  
+    def get_row_col_from_pos(self, pos): # gets cursor position
+        x, y = pos
+        row = y // self.square_dimensions 
+        col = x // self.square_dimensions 
+        if row > self.rows or col > self.col:
+            return None
+        return row, col
 
-    def create_grid(self):
-        for row in range(ROWS):
-            for column in range(COLUMNS):
-                square_color = (('white', 'black') [(row+column) & 1]) 
-                # adding distance equal to borderline in starting points of sqaure shifts them enough to have place for a borderline 
-                pygame.draw.rect(self.Window, color[square_color], ((column * SQUARE_DIMENSIONS)+BORDERLINE, (row * SQUARE_DIMENSIONS)+BORDERLINE, SQUARE_DIMENSIONS, SQUARE_DIMENSIONS))
-             
-
-    def rungame(self):
-        
+    def rungame(self): 
         pygame.display.set_caption("CHESS") 
-        self.Window.fill(color['dark_red'])  
+        self.window.fill(color['black'])  
+        board = Board(self.rows, self.columns, self.window, self.square_dimensions, self.borderline)
+        board.create_board()
+        board.create_pieces()
+        board.set_pieces()
+        pygame.display.update()     
         run = True
-        self.create_grid()
-        pygame.display.update()
-        while run:
+        while run: 
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     run = False
+                """ if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+                    pos = pygame.mouse.get_pos()
+                    row, column = self.get_row_col_from_pos(pos)
+                    if row != None and column!= None:
+                        piece_name =  piece.get_piecename_from_position(row, column)
+                if event.type == pygame.MOUSEBUTTONUP and event.button == 1 and piece_name != None:
+                    pass 
+                """
         pygame.quit()
 
 if __name__ == '__main__':
-    game = Game()
+    game = Game(8, 8, 712, 712, 700)
+    game.rungame()
     
