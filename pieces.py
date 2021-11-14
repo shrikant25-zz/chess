@@ -15,6 +15,6 @@ class Pieces:
         return row, column
 
     def update_piece_position(self, row, column):
-        self.current_rank = 8 - int(row)
-        self.current_file = chr(ord(column) + 49)
+        self.current_rank = str(8 - int(row))
+        self.current_file = chr(ord(str(column)) + 49)
 
