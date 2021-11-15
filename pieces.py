@@ -1,20 +1,16 @@
 
 class Pieces:
-    def __init__(self, name, current_file, current_rank, possible_positions="", initial = ""):        
+    def __init__(self, name, current_row, current_column, possible_positions="", initial = ""):        
         self.initial = initial 
         self.name = name
-        self.current_file = current_file
-        self.current_rank = current_rank
+        self.current_row = current_row
+        self.current_column = current_column
         self.alive = True
         self.dead = False
         self.possible_positions = possible_positions
 
-    def get_row_column(self):
-        column = int(chr(ord(self.current_file) - 49))
-        row = 8 - int(self.current_rank)
-        return row, column
-
-    def update_piece_position(self, row, column):
-        self.current_rank = str(8 - int(row))
-        self.current_file = chr(ord(str(column)) + 49)
+    def get_file_rank(self):
+        current_rank = str(8 - int(self.current_row))
+        current_file = chr(ord(str(self.current_column)) + 49)
+        return current_file, current_rank
 
