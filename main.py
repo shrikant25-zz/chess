@@ -18,8 +18,8 @@ class Game:
         x, y = pos
         row = y // self.square_dimensions 
         col = x // self.square_dimensions 
-        if row > self.rows or col > self.columns:
-            return None
+        if row >= self.rows or col >= self.columns:
+            return None, None
         return row, col
 
     def rungame(self): 
@@ -41,12 +41,18 @@ class Game:
                     if row != None and column!= None:
                         piece =  board.get_piece_from_position(row, column)
                         board.active_piece = piece
+                        if board.active_piece != None:
+                            board.draw_square('green', board.active_piece.current_row, board.active_piece.current_column)
+                            board.display_piece_on_board(board.active_piece.name, board.active_piece.current_row, board.active_piece.current_column)
+                            pygame.display.update()
                 if event.type == pygame.MOUSEBUTTONUP and event.button == 1 and board.active_piece != None:
+                    print("hmmm")
                     pos = pygame.mouse.get_pos()
                     row, column = self.get_row_col_from_pos(pos)
-                    if row != None and column!= None:
+                    if (row and column != None) and (row!= board.active_piece.current_row or column != board.active_piece.current_column):
                         board.remove_piece_from_board(board.active_piece)
-                        board.active_piece.update_piece_position(row, column)
+                        board.active_piece.current_row = row
+                        board.active_piece.current_column = column
                         board.display_piece_on_board(board.active_piece.name, row, column)
                         pygame.display.update() 
                         board.active_piece = None
