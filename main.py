@@ -22,6 +22,28 @@ class Game:
             return None, None
         return row, col
 
+    def mouse_down(self, board):
+        pos = pygame.mouse.get_pos()
+        row, column = self.get_row_col_from_pos(pos)
+        if row != None and column!= None:
+            piece =  board.get_piece_from_position(row, column)
+            board.active_piece = piece
+            if board.active_piece != None:
+                board.draw_square('green', board.active_piece.current_row, board.active_piece.current_column)
+                board.display_piece_on_board(board.active_piece.name, board.active_piece.current_row, board.active_piece.current_column)
+                pygame.display.update()
+
+    def mouse_up(self, board):
+        pos = pygame.mouse.get_pos()
+        row, column = self.get_row_col_from_pos(pos)
+        if (row and column != None) and (row!= board.active_piece.current_row or column != board.active_piece.current_column):
+            board.remove_piece_from_board(board.active_piece)
+            board.active_piece.current_row = row
+            board.active_piece.current_column = column
+            board.display_piece_on_board(board.active_piece.name, row, column)
+            pygame.display.update() 
+            board.active_piece = None
+
     def rungame(self): 
         pygame.display.set_caption("CHESS") 
         self.window.fill(color['black'])  
@@ -36,26 +58,9 @@ class Game:
                 if event.type == pygame.QUIT:
                     run = False
                 if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1 and board.active_piece == None:
-                    pos = pygame.mouse.get_pos()
-                    row, column = self.get_row_col_from_pos(pos)
-                    if row != None and column!= None:
-                        piece =  board.get_piece_from_position(row, column)
-                        board.active_piece = piece
-                        if board.active_piece != None:
-                            board.draw_square('green', board.active_piece.current_row, board.active_piece.current_column)
-                            board.display_piece_on_board(board.active_piece.name, board.active_piece.current_row, board.active_piece.current_column)
-                            pygame.display.update()
+                    self.mouse_down(board)
                 if event.type == pygame.MOUSEBUTTONUP and event.button == 1 and board.active_piece != None:
-                    print("hmmm")
-                    pos = pygame.mouse.get_pos()
-                    row, column = self.get_row_col_from_pos(pos)
-                    if (row and column != None) and (row!= board.active_piece.current_row or column != board.active_piece.current_column):
-                        board.remove_piece_from_board(board.active_piece)
-                        board.active_piece.current_row = row
-                        board.active_piece.current_column = column
-                        board.display_piece_on_board(board.active_piece.name, row, column)
-                        pygame.display.update() 
-                        board.active_piece = None
+                    self.mouse_up(board)
                         
         pygame.quit()
 
