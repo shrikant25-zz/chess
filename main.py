@@ -27,7 +27,7 @@ class Game:
         row, column = self.get_row_col_from_pos(pos)
         if row != None and column!= None:
             active_piece = board.get_piece_from_position(row, column)
-            if active_piece:
+            if active_piece and board.turn == active_piece.color:
                 active_piece.active = True
                 square = board.get_square_from_position(row, column)
                 square.active = True
@@ -48,6 +48,10 @@ class Game:
                     for piece in pieces_inpath:
                         if piece.row == row and piece.column == column:
                             piece.alive = False
+                    if active_piece.color == 'white':
+                        board.turn = 'black'
+                    if active_piece.color == 'black':
+                        board.turn = 'white'
             for piece in pieces_inpath:
                 piece.inpath = False
             active_piece.active = False
