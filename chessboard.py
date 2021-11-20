@@ -61,7 +61,7 @@ class Board():
 
     def is_there_piece_on_position(self, row, column):
         for piece in self.pieces_list:
-            if piece.row == row and piece.column == column:
+            if piece.row == row and piece.column == column and piece.alive:
                 return True
         return False
     
@@ -115,73 +115,3 @@ class Board():
             if square.possible_position is True:
                 possible_squares.append(square)
         return possible_squares
-
-    
-            
-
-          
-          
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-"""def create_pieces(self): 
-        self.pieces_list.append(pieces.Pawn("white_pawn1", 6, 0, 'white'))
-        self.pieces_list.append(pieces.Pawn("white_pawn2", 6, 1, 'white'))
-        self.pieces_list.append(pieces.Pawn("white_pawn3", 6, 2, 'white'))
-        self.pieces_list.append(pieces.Pawn("white_pawn4", 6, 3, 'white'))
-        self.pieces_list.append(pieces.Pawn("white_pawn5", 6, 4, 'white'))
-        self.pieces_list.append(pieces.Pawn("white_pawn6", 6, 5, 'white'))
-        self.pieces_list.append(pieces.Pawn("white_pawn7", 6, 6, 'white'))
-        self.pieces_list.append(pieces.Pawn("white_pawn8", 6, 7, 'white'))
-        self.pieces_list.append(pieces.Rook("white_rook1", 7, 0, 'white'))
-        self.pieces_list.append(pieces.Knight("white_knight1", 7, 1, 'white'))
-        self.pieces_list.append(pieces.Bishop("white_bishop1", 7, 2, 'white'))
-        self.pieces_list.append(pieces.Queen("white_queen", 7, 3, 'white'))
-        self.pieces_list.append(pieces.King("white_king", 7, 4, 'white'))
-        self.pieces_list.append(pieces.Bishop("white_bishop2", 7, 5, 'white'))
-        self.pieces_list.append(pieces.Knight("white_knight2", 7, 6, 'white'))
-        self.pieces_list.append(pieces.Rook("white_rook2", 7, 7, 'white'))
-
-        self.pieces_list.append(pieces.Pawn("black_pawn1", 1, 0, 'black'))
-        self.pieces_list.append(pieces.Pawn("black_pawn2", 1, 1, 'black'))
-        self.pieces_list.append(pieces.Pawn("black_pawn3", 1, 2, 'black'))
-        self.pieces_list.append(pieces.Pawn("black_pawn4", 1, 3, 'black'))
-        self.pieces_list.append(pieces.Pawn("black_pawn5", 1, 4, 'black'))
-        self.pieces_list.append(pieces.Pawn("black_pawn6", 1, 5, 'black'))
-        self.pieces_list.append(pieces.Pawn("black_pawn7", 1, 6, 'black'))
-        self.pieces_list.append(pieces.Pawn("black_pawn8", 1, 7, 'black'))
-        self.pieces_list.append(pieces.Rook("black_rook1", 0, 0, 'black'))
-        self.pieces_list.append(pieces.Knight("black_knight1", 0, 1, 'black'))
-        self.pieces_list.append(pieces.Bishop("black_bishop1", 0, 2, 'black'))
-        self.pieces_list.append(pieces.Queen("black_queen", 0, 3, 'black'))
-        self.pieces_list.append(pieces.King("black_king", 0, 4, 'black'))
-        self.pieces_list.append(pieces.Bishop("black_bishop2", 0, 5, 'black'))
-        self.pieces_list.append(pieces.Knight("black_knight2", 0, 6, 'black'))
-        self.pieces_list.append(pieces.Rook("black_rook2", 0, 7, 'black'))"""
