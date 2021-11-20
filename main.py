@@ -1,6 +1,6 @@
 import pygame
-from colors import color
 from chessboard import Board
+from colors import color
 
 class Game:
     def __init__(self, rows, columns, width, height, board_dimensions):
@@ -26,45 +26,70 @@ class Game:
         pos = pygame.mouse.get_pos()
         row, column = self.get_row_col_from_pos(pos)
         if row != None and column!= None:
-            piece =  board.get_piece_from_position(row, column)
-            board.active_piece = piece
-            if board.active_piece != None:
-                board.draw_square('green', board.active_piece.current_row, board.active_piece.current_column)
-                board.display_piece_on_board(board.active_piece.name, board.active_piece.current_row, board.active_piece.current_column)
-                pygame.display.update()
+            active_piece = board.get_piece_from_position(row, column)
+            if active_piece:
+                active_piece.active = True
+                square = board.get_square_from_position(row, column)
+                square.active = True
+                active_piece.set_moves(board)
 
     def mouse_up(self, board):
         pos = pygame.mouse.get_pos()
         row, column = self.get_row_col_from_pos(pos)
-        if (row and column != None) and (row!= board.active_piece.current_row or column != board.active_piece.current_column):
-            board.remove_piece_from_board(board.active_piece)
-            board.active_piece.current_row = row
-            board.active_piece.current_column = column
-            board.display_piece_on_board(board.active_piece.name, row, column)
-            pygame.display.update() 
-            board.active_piece = None
+        active_piece = board.get_active_piece()
+        if (row != None and column != None) and (row!= active_piece.row or column != active_piece.column):
+            possible_squares = board.get_possible_squares()
+            pieces_inpath = board.get_pieces_inpath()
+            for square in possible_squares:
+                square.possible_position = False
+                if square.row == row and square.column == column:
+                    active_piece.row = row
+                    active_piece.column = column
+                    for piece in pieces_inpath:
+                        if piece.row == row and piece.column == column:
+                            piece.alive = False
+            for piece in pieces_inpath:
+                piece.inpath = False
+            active_piece.active = False
+            active_square = board.get_active_square()
+            active_square.active = False
+                    
+    def update_board(self, board):
+        for square in board.squares_list:
+            if square.possible_position is True:
+                square.color = 'faint_blue'
+            if square.color == 'faint_blue' and square.possible_position is False:
+                square.color =  (('dark_silver', 'dark_red') [(square.row+square.column) & 1])
+            if square.active is True:
+                square.color = 'faint_green'
+            if square.color == 'faint_green' and square.active is False:
+                square.color =  (('dark_silver', 'dark_red') [(square.row+square.column) & 1])
+            board.draw_square(square.color, square.row, square.column)
+        for piece in board.pieces_list:
+            if piece.alive == False:
+                continue
+            board.display_piece_on_board(piece, piece.row, piece.column)
+        pygame.display.update()     
 
     def rungame(self): 
         pygame.display.set_caption("CHESS") 
         self.window.fill(color['black'])  
-        board = Board(self.rows, self.columns, self.window, self.square_dimensions, self.borderline)
-        board.create_board()
-        board.create_pieces()
-        board.set_pieces()
-        pygame.display.update()     
+        board = Board(self.window, self.square_dimensions, self.borderline, 'white')
+        board.create_board(self.rows, self.columns)
+        self.update_board(board)    
         run = True
         while run: 
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     run = False
-                if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1 and board.active_piece == None:
+                active_piece = board.get_active_piece()
+                if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1 and active_piece == None:
                     self.mouse_down(board)
-                if event.type == pygame.MOUSEBUTTONUP and event.button == 1 and board.active_piece != None:
+                if event.type == pygame.MOUSEBUTTONUP and event.button == 1 and active_piece != None:
                     self.mouse_up(board)
-                        
+            self.update_board(board)
         pygame.quit()
 
 if __name__ == '__main__':
     game = Game(8, 8, 712, 712, 700)
     game.rungame()
-    
