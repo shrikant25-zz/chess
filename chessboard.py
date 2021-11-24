@@ -1,5 +1,5 @@
 import pygame
-import pieces
+from items import *
 import squares
 from colors import color
 
@@ -19,17 +19,17 @@ class Board():
             pawn_row = ((6,1) [even])
             other_row = ((7,0) [even])
             
-            self.pieces_list.append(pieces.Queen(piece_color+"_queen", other_row, 3, piece_color))
-            self.pieces_list.append(pieces.King(piece_color+"_king", other_row, 4, piece_color))
+            self.pieces_list.append(queen.Queen(piece_color+"_queen", other_row, 3, piece_color))
+            self.pieces_list.append(king.King(piece_color+"_king", other_row, 4, piece_color))
             for j in range(8):
-                self.pieces_list.append(pieces.Pawn(piece_color+"_pawn"+str(j+1), pawn_row, j, piece_color))
+                self.pieces_list.append(pawn.Pawn(piece_color+"_pawn"+str(j+1), pawn_row, j, piece_color))
                 if j < 2:
                     column = ((0,7) [j%2 ==0])
-                    self.pieces_list.append(pieces.Rook(piece_color+"_rook"+str(j+1), other_row, column, piece_color))
+                    self.pieces_list.append(rook.Rook(piece_color+"_rook"+str(j+1), other_row, column, piece_color))
                     column = ((1,6) [j%2 ==0])
-                    self.pieces_list.append(pieces.Knight(piece_color+"_knight"+str(j+1), other_row, column, piece_color))
+                    self.pieces_list.append(knight.Knight(piece_color+"_knight"+str(j+1), other_row, column, piece_color))
                     column = ((2,5) [j%2 ==0])
-                    self.pieces_list.append(pieces.Bishop(piece_color+"_bishop"+str(j+1), other_row, column, piece_color))
+                    self.pieces_list.append(bishop.Bishop(piece_color+"_bishop"+str(j+1), other_row, column, piece_color))
                 
         for row in range(rows):
             for column in range(columns):
@@ -54,10 +54,6 @@ class Board():
         piece_image = pygame.image.load(path + "\\" + piece.name + ".png")
         piece_image = pygame.transform.scale(piece_image, (67, 67))
         self.window.blit(piece_image, position_on_chessboard)
-
-    def remove_piece_from_board(self, piece):
-        square_color = (('dark_silver', 'dark_red') [(piece.row + piece.column) & 1])
-        self.draw_square(square_color, piece.row, piece.column)
 
     def is_there_piece_on_position(self, row, column):
         for piece in self.pieces_list:
@@ -102,16 +98,11 @@ class Board():
                 pieces_inpath.append(piece)
         return pieces_inpath
 
-    def get_blocking_pieces(self):
-        blocking_pieces = []
-        for piece in self.pieces_list:
-            if piece.blocking_piece is True:
-                blocking_pieces.append(piece)
-        return blocking_pieces
-
     def get_possible_squares(self):
         possible_squares = []
         for square in self.squares_list:
             if square.possible_position is True:
                 possible_squares.append(square)
         return possible_squares
+
+  
