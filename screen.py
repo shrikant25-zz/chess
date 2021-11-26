@@ -1,5 +1,7 @@
 import pygame
 from chessboard import Board
+from cases import update_enpassant_info, check_if_passed
+
 
 class Screen():
     def __init__(self, square_dimensions, rows, columns, window, borderline):
@@ -30,7 +32,10 @@ class Screen():
             active_piece.active = True
             square = self.board.get_square_from_position(row, column)
             square.active = True
-            self.check_game_status(active_piece)
+            active_piece.set_moves(self.board)
+            if self.board.enpassant_possible:
+                update_enpassant_info(active_piece, self.board)
+            active_piece.update_board_objects(self.board)
             
     def make_move(self, row, column, active_piece):
         possible_squares = self.board.get_possible_squares()
@@ -38,6 +43,8 @@ class Screen():
         for square in possible_squares:
             square.possible_position = False
             if square.row == row and square.column == column:
+                if active_piece.__class__.__name__ == 'Pawn':
+                    check_if_passed(active_piece, self.board, row, column)
                 active_piece.row = row
                 active_piece.column = column
                 for piece in pieces_inpath:
@@ -62,7 +69,7 @@ class Screen():
             return None, None
         return row, col
        
-    def update_board(self):
+    def update_board_display(self):
         for square in self.board.squares_list:
             if square.possible_position is True:
                 square.color = 'faint_blue'
@@ -79,35 +86,19 @@ class Screen():
             self.board.display_piece_on_board(piece, piece.row, piece.column)
         pygame.display.update()
 
-    def check_game_status(self, our_piece):
-        available_positions = []
-        our_piece.set_moves(self.board)
-        our_original_row = our_piece.row
-        our_original_column = our_piece.column
+    
+    
 
-        for our_possible_row, our_possible_column, opposite_piece_under_attack in our_piece.possible_positions:
-            king_in_check = False
-            our_piece.row = our_possible_row
-            our_piece.column = our_possible_column
-            if opposite_piece_under_attack:
-                opposite_piece_under_attack.alive = False
-            for opposite_piece in self.board.pieces_list:
-                if self.board.turn != opposite_piece.color and opposite_piece.alive:
-                    opposite_piece.set_moves(self.board)
-                    for _, _, our_piece_under_attack in opposite_piece.possible_positions:
-                        if our_piece_under_attack.__class__.__name__ == 'King':
-                            king_in_check = True
-                            break
-                opposite_piece.possible_positions = []
-                if king_in_check:
-                    break
-            
-            if opposite_piece_under_attack:
-                opposite_piece_under_attack.alive = True
-            if not king_in_check:
-                available_positions.append([our_possible_row, our_possible_column, opposite_piece_under_attack])
-        
-        our_piece.row = our_original_row
-        our_piece.column = our_original_column
-        our_piece.possible_positions = available_positions
-        our_piece.update_board_objects(self.board)
+
+
+
+
+
+
+
+
+
+
+
+
+
