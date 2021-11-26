@@ -116,3 +116,4 @@ class Pieces:
             square = board.get_square_from_position(row, column)
             square.possible_position = True
     
+    
