@@ -1,7 +1,10 @@
+from typing import Tuple
 from . import pieces
 
 class Pawn(pieces.Pieces):
     def __init__(self, name, row, column, color):
+        self.passed = False
+        self.can_do_enpassant = False
         super().__init__(name, row, column, color)
 
     def set_moves(self, board):
@@ -42,3 +45,5 @@ class Pawn(pieces.Pieces):
             self.possible_positions.append([row, column, None])
             if not board.is_there_piece_on_position(row2, column)  and board.is_there_square_on_position(row2, column):
                 self.possible_positions.append([row2, column, None])
+    
+    
