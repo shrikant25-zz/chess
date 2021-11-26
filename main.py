@@ -1,6 +1,8 @@
 import pygame
 from colors import color
 from screen import Screen
+from cases import check_game_status, check_if_under_attack
+
 
 class Game:
     def __init__(self, rows, columns, width, height, board_dimensions):
@@ -19,9 +21,9 @@ class Game:
         self.window.fill(color['black']) 
         screen = Screen(self.square_dimensions, self.rows, self.columns, self.window, self.borderline)
         screen.board.create_board(self.rows, self.columns)
-        screen.update_board()    
+        screen.update_board_display()    
         run = True
-        while run: 
+        while run:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     run = False
@@ -30,7 +32,16 @@ class Game:
                     screen.mouse_down()
                 if event.type == pygame.MOUSEBUTTONUP and event.button == 1 and active_piece != None:
                     screen.mouse_up()
-            screen.update_board()
+            screen.update_board_display()
+            check = check_if_under_attack(screen.board)
+            if check:
+                status = check_game_status(screen.board)
+                if not status:
+                    if screen.board.turn == 'white':
+                        print("black won") 
+                    else:
+                        print("white won")
+                    break
         pygame.quit()
 
 if __name__ == '__main__':
