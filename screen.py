@@ -1,6 +1,6 @@
 import pygame
 from chessboard import Board
-from cases import update_enpassant_info, check_if_passed
+from cases import *
 
 
 class Screen():
@@ -18,10 +18,9 @@ class Screen():
         if row != None and column!= None:
             self.select_piece(row, column)
 
-    def mouse_up(self):
+    def mouse_up(self, active_piece):
         pos = pygame.mouse.get_pos()
         row, column = self.get_row_col_from_pos(pos)
-        active_piece = self.board.get_active_piece()
         if (row != None and column != None) and (row!= active_piece.row or column != active_piece.column):
             self.make_move(row, column, active_piece)
 
@@ -32,35 +31,54 @@ class Screen():
             active_piece.active = True
             square = self.board.get_square_from_position(row, column)
             square.active = True
-            active_piece.set_moves(self.board)
+            update_available_positions(self.board, active_piece)
+            
             if self.board.enpassant_possible:
                 update_enpassant_info(active_piece, self.board)
+            
             active_piece.update_board_objects(self.board)
             
     def make_move(self, row, column, active_piece):
         possible_squares = self.board.get_possible_squares()
         pieces_inpath = self.board.get_pieces_inpath()
-        for square in possible_squares:
-            square.possible_position = False
-            if square.row == row and square.column == column:
+    
+        for possible_row, possible_column, possible_victim in active_piece.possible_positions:           
+            if possible_row == row and possible_column == column:
+        
                 if active_piece.__class__.__name__ == 'Pawn':
+                    if self.board.enpassant_possible:
+                        remove_enpassant_data(self.board, active_piece)
                     check_if_passed(active_piece, self.board, row, column)
+
                 active_piece.row = row
                 active_piece.column = column
-                for piece in pieces_inpath:
-                    if piece.row == row and piece.column == column:
-                        piece.alive = False
+                if possible_victim:
+                    possible_victim.alive = False
+                
                 if active_piece.color == 'white':
                     self.board.turn = 'black'
+                
                 if active_piece.color == 'black':
                     self.board.turn = 'white'
+        
         for piece in pieces_inpath:
             piece.inpath = False
+
+        for square in possible_squares:
+            square.possible_position = False
+        
+        if self.board.king_under_check:
+            self.board.king_under_check = False
+
+        if check_if_opposite_king_under_check(self.board, active_piece):
+            if not update_piece_positions(self.board, active_piece):
+                print(f"{active_piece.color} won")
+                
         active_piece.active = False
         active_square = self.board.get_active_square()
         active_square.active = False
         active_piece.possible_positions = []
-    
+
     def get_row_col_from_pos(self, pos): # gets cursor position
         x, y = pos
         row = y // self.square_dimensions 
