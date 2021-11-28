@@ -1,7 +1,8 @@
+import threading
 
-def check_if_opposite_king_under_check(board, active_piece):
+def king_under_attack(board):
     for piece in board.pieces_list:
-        if piece.color == active_piece.color and piece.alive:
+        if piece.color != board.turn and piece.alive:
             piece.set_moves(board)
             for _, _, opposite_piece_under_attack in piece.possible_positions:
                 if opposite_piece_under_attack.__class__.__name__ == 'King':
@@ -9,18 +10,33 @@ def check_if_opposite_king_under_check(board, active_piece):
                     return True
     return False
 
-def update_piece_positions(board, active_piece):
+def only_kings_remain(board):
     for piece in board.pieces_list:
-        if piece.color != active_piece.color and piece.alive:
-            update_available_positions(board, piece)
+        if piece.__class__.__name__ != 'King' and piece.alive:
+            return False
+    return True
 
+def can_our_pieces_move(board, color):
     pieces_can_move = False
     for piece in board.pieces_list:
-        if piece.color != active_piece.color and piece.alive:     
+        if piece.color == color and piece.alive:
             if piece.possible_positions:
                 pieces_can_move = True
-                break
     return pieces_can_move
+
+def update_moves_of_all_pieces(board, color):
+    jobs_list = []
+    
+    for piece in board.pieces_list:
+        if piece.color == color and piece.alive:
+            job = threading.Thread(target=update_available_positions, args=(board, piece))
+            jobs_list.append(job)
+    
+    for job in jobs_list:
+        job.start()
+
+    for job in jobs_list:
+        job.join()
 
 def update_available_positions(board, our_piece):
     available_positions = []
