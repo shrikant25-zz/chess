@@ -31,8 +31,6 @@ class Screen():
             active_piece.active = True
             square = self.board.get_square_from_position(row, column)
             square.active = True
-            update_available_positions(self.board, active_piece)
-            
             if self.board.enpassant_possible:
                 update_enpassant_info(active_piece, self.board)
             
@@ -52,15 +50,16 @@ class Screen():
 
                 active_piece.row = row
                 active_piece.column = column
+
                 if possible_victim:
                     possible_victim.alive = False
-                
+
                 if active_piece.color == 'white':
-                    self.board.turn = 'black'
-                
-                if active_piece.color == 'black':
+                    self.board.turn = 'black' 
+                else:
                     self.board.turn = 'white'
-        
+                break
+
         for piece in pieces_inpath:
             piece.inpath = False
 
@@ -70,10 +69,6 @@ class Screen():
         if self.board.king_under_check:
             self.board.king_under_check = False
 
-        if check_if_opposite_king_under_check(self.board, active_piece):
-            if not update_piece_positions(self.board, active_piece):
-                print(f"{active_piece.color} won")
-                
         active_piece.active = False
         active_square = self.board.get_active_square()
         active_square.active = False

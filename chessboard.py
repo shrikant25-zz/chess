@@ -23,13 +23,17 @@ class Board():
             
             self.pieces_list.append(queen.Queen(piece_color+"_queen", other_row, 3, piece_color))
             self.pieces_list.append(king.King(piece_color+"_king", other_row, 4, piece_color))
+           
             for j in range(8):
                 self.pieces_list.append(pawn.Pawn(piece_color+"_pawn"+str(j+1), pawn_row, j, piece_color))
                 if j < 2:
+                   
                     column = ((0,7) [j%2 ==0])
                     self.pieces_list.append(rook.Rook(piece_color+"_rook"+str(j+1), other_row, column, piece_color))
+                    
                     column = ((1,6) [j%2 ==0])
                     self.pieces_list.append(knight.Knight(piece_color+"_knight"+str(j+1), other_row, column, piece_color))
+                    
                     column = ((2,5) [j%2 ==0])
                     self.pieces_list.append(bishop.Bishop(piece_color+"_bishop"+str(j+1), other_row, column, piece_color))
                 
