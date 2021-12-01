@@ -9,7 +9,7 @@ class Board():
         self.square_dimensions = square_dimensions
         self.borderline = borderline
         self.turn = turn
-        self.king_under_check = False
+        self.king_in_check = False
         self.enpassant_possible = False
         self.pieces_list = []
         self.squares_list = []
@@ -111,4 +111,4 @@ class Board():
                 possible_squares.append(square)
         return possible_squares
 
-  
+

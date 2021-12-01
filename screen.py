@@ -1,3 +1,4 @@
+from typing import Tuple
 import pygame
 from chessboard import Board
 from cases import *
@@ -25,12 +26,12 @@ class Screen():
             self.make_move(row, column, active_piece)
 
     def select_piece(self, row, column):
-        # check if king got check
         active_piece = self.board.get_piece_from_position(row, column)
         if active_piece and self.board.turn == active_piece.color:
             active_piece.active = True
             square = self.board.get_square_from_position(row, column)
             square.active = True
+            
             if self.board.enpassant_possible:
                 update_enpassant_info(active_piece, self.board)
             
@@ -42,7 +43,13 @@ class Screen():
     
         for possible_row, possible_column, possible_victim in active_piece.possible_positions:           
             if possible_row == row and possible_column == column:
-        
+                
+                if active_piece.__class__.__name__ == 'King' or active_piece.__class__.__name__ == 'Rook':
+                    if active_piece.moved == False:
+                        if active_piece.left_castle_possible == True or active_piece.right_castle_possible == True:
+                            add_castling_info(self.board, active_piece, possible_row, possible_column, castle = True)
+                        active_piece.moved = True
+                        
                 if active_piece.__class__.__name__ == 'Pawn':
                     if self.board.enpassant_possible:
                         remove_enpassant_data(self.board, active_piece)
@@ -65,9 +72,6 @@ class Screen():
 
         for square in possible_squares:
             square.possible_position = False
-        
-        if self.board.king_under_check:
-            self.board.king_under_check = False
 
         active_piece.active = False
         active_square = self.board.get_active_square()
