@@ -40,10 +40,9 @@ class Screen():
     def make_move(self, row, column, active_piece):
         possible_squares = self.board.get_possible_squares()
         pieces_inpath = self.board.get_pieces_inpath()
-    
+        
         for possible_row, possible_column, possible_victim in active_piece.possible_positions:           
-            if possible_row == row and possible_column == column:
-                
+            if possible_row == row and possible_column == column:        
                 if active_piece.__class__.__name__ == 'King' or active_piece.__class__.__name__ == 'Rook':
                     if active_piece.moved == False:
                         if active_piece.left_castle_possible == True or active_piece.right_castle_possible == True:
@@ -53,6 +52,9 @@ class Screen():
                 if active_piece.__class__.__name__ == 'Pawn':
                     if self.board.enpassant_possible:
                         remove_enpassant_data(self.board, active_piece)
+                    else:
+                         if (active_piece.color == "white" and possible_row == 0) or (active_piece.color == "black" and possible_row == 7):
+                            active_piece = self.board.promote(active_piece, possible_row, possible_column)
                     check_if_passed(active_piece, self.board, row, column)
 
                 active_piece.row = row

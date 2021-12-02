@@ -110,5 +110,14 @@ class Board():
             if square.possible_position is True:
                 possible_squares.append(square)
         return possible_squares
-
+    
+    def promote(self, active_piece, possible_row, possible_column):
+        piece_color = active_piece.color
+        active_piece.active = False
+        active_piece.alive = False
+        self.pieces_list.remove(active_piece)
+        new_piece = queen.Queen(piece_color+"_queen", possible_row, possible_column, piece_color)
+        self.pieces_list.append(new_piece)
+        new_piece.active = True
+        return new_piece
 

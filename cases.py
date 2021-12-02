@@ -1,4 +1,5 @@
 import threading
+import random
 
 def king_under_attack(board):
     for piece in board.pieces_list:
@@ -27,7 +28,6 @@ def can_our_pieces_move(board, color):
 
 def update_moves_of_all_pieces(board, color):
     jobs_list = []
-    
     for piece in board.pieces_list:
         if piece.color == color and piece.alive:
             job = threading.Thread(target=update_available_positions, args=(board, piece))
@@ -38,6 +38,8 @@ def update_moves_of_all_pieces(board, color):
 
     for job in jobs_list:
         job.join()
+    
+    sum = 0 
 
 def update_available_positions(board, our_piece):
     available_positions = []
@@ -76,14 +78,13 @@ def update_available_positions(board, our_piece):
             
     our_piece.row = our_original_row
     our_piece.column = our_original_column
+    our_piece.possible_positions = []
     our_piece.possible_positions = available_positions
 
     if our_piece.__class__.__name__ == 'King' or our_piece.__class__.__name__ == 'Rook':
         if not king_under_attack(board) and not our_piece.moved:
             add_castling_info(board, our_piece)
-        else:
-            print("left")
-
+ 
 def update_enpassant_info(active_piece, board):
     target_piece = None
     for piece in board.pieces_list:
@@ -250,3 +251,14 @@ def is_the_square_safe(board ,piece, square):
                         return False
     return True
 
+def generate_piece(board):
+    cur_piece = None
+    while(1):
+        cur_piece = random.choice(board.pieces_list)
+        if cur_piece.color == board.turn and cur_piece.alive and cur_piece.possible_positions:
+            break
+    return cur_piece
+    
+def generate_move(piece):
+    cur_move = random.choice(piece.possible_positions)
+    return cur_move
