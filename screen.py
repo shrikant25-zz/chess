@@ -1,8 +1,6 @@
-from typing import Tuple
 import pygame
 from chessboard import Board
 from cases import *
-
 
 class Screen():
     def __init__(self, square_dimensions, rows, columns, window, borderline):
@@ -31,10 +29,6 @@ class Screen():
             active_piece.active = True
             square = self.board.get_square_from_position(row, column)
             square.active = True
-            
-            if self.board.enpassant_possible:
-                update_enpassant_info(active_piece, self.board)
-            
             active_piece.update_board_objects(self.board)
             
     def make_move(self, row, column, active_piece):
@@ -43,26 +37,66 @@ class Screen():
         
         for possible_row, possible_column, possible_victim in active_piece.possible_positions:           
             if possible_row == row and possible_column == column:        
-                if active_piece.__class__.__name__ == 'King' or active_piece.__class__.__name__ == 'Rook':
+                if active_piece.piece_type == 'King':
                     if active_piece.moved == False:
                         if active_piece.left_castle_possible == True or active_piece.right_castle_possible == True:
-                            add_castling_info(self.board, active_piece, possible_row, possible_column, castle = True)
+                            active_piece.add_castling_info(self.board, possible_row, possible_column, castle = True)
                         active_piece.moved = True
-                        
-                if active_piece.__class__.__name__ == 'Pawn':
-                    if self.board.enpassant_possible:
-                        remove_enpassant_data(self.board, active_piece)
-                    else:
-                         if (active_piece.color == "white" and possible_row == 0) or (active_piece.color == "black" and possible_row == 7):
-                            active_piece = self.board.promote(active_piece, possible_row, possible_column)
-                    check_if_passed(active_piece, self.board, row, column)
+                
+                if active_piece.piece_type == 'Rook':
+                        active_piece.moved = True
 
+                if active_piece.piece_type == 'Pawn':
+                    if self.board.enpassant_possible:
+                        active_piece.remove_enpassant_data(self.board, active_piece)
+                    active_piece.check_if_passed(active_piece, self.board, row, column)
+                    if (active_piece.color == "white" and possible_row == 0) or (active_piece.color == "black" and possible_row == 7):
+                        active_piece = self.board.promote(active_piece, possible_row, possible_column)
+        
                 active_piece.row = row
                 active_piece.column = column
-
+                
                 if possible_victim:
                     possible_victim.alive = False
 
+                active_piece.possible_positions = []
+                active_piece.set_moves(self.board)
+                self.board.squares_under_attack = []
+               
+                for piece in self.board.pieces_list:
+                    if piece.color == self.board.turn and piece.alive:
+                        for row, column, _ in piece.possible_positions:
+                            if piece.piece_type == 'Pawn':
+                                if piece.color == 'white':
+                                    if self.board.is_there_square_on_position(piece.row - 1, piece.column + 1):
+                                        square = self.board.get_square_from_position(piece.row - 1, piece.column + 1)
+                                        if square not in self.board.squares_under_attack:
+                                            self.board.squares_under_attack.append(square)
+                                            #print(f"under attack row : {piece.row - 1} column : {piece.column+1} by {piece.name}")
+                                    if self.board.is_there_square_on_position(piece.row - 1, piece.column - 1):
+                                        square = self.board.get_square_from_position(piece.row - 1, piece.column - 1)
+                                        if square not in self.board.squares_under_attack:
+                                            self.board.squares_under_attack.append(square)
+                                            #print(f"under attack row : {piece.row-1} column : {piece.column-1} by {piece.name}")
+
+                                if piece.color == 'black':
+                                    if self.board.is_there_square_on_position(piece.row + 1, piece.column + 1):
+                                        square = self.board.get_square_from_position(piece.row + 1, piece.column + 1)
+                                        if square not in self.board.squares_under_attack:
+                                            self.board.squares_under_attack.append(square)
+                                            #print(f"under attack row : {piece.row+1} column : {piece.column+1} by {piece.name}")
+                                    if self.board.is_there_square_on_position(piece.row + 1, piece.column - 1):
+                                        square = self.board.get_square_from_position(piece.row + 1, piece.column - 1)
+                                        if square not in self.board.squares_under_attack:
+                                            self.board.squares_under_attack.append(square)
+                                            #print(f"under attack row : {piece.row+1} column : {piece.column-1} by {piece.name}")
+                    
+                            else:
+                                square = self.board.get_square_from_position(row, column)
+                                if square not in self.board.squares_under_attack:
+                                    self.board.squares_under_attack.append(square)
+                                    #print(f"under attack row : {piece.row+1} column : {piece.column-1} by {piece.name}")
+                                    
                 if active_piece.color == 'white':
                     self.board.turn = 'black' 
                 else:
@@ -77,8 +111,10 @@ class Screen():
 
         active_piece.active = False
         active_square = self.board.get_active_square()
-        active_square.active = False
+        if active_square:
+            active_square.active = False
         active_piece.possible_positions = []
+        self.update_board_display()
 
     def get_row_col_from_pos(self, pos): # gets cursor position
         x, y = pos
@@ -107,8 +143,6 @@ class Screen():
 
     
     
-
-
 
 
 
