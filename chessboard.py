@@ -9,10 +9,12 @@ class Board():
         self.square_dimensions = square_dimensions
         self.borderline = borderline
         self.turn = turn
-        self.king_in_check = False
+        self.black_king_in_check = False
+        self.white_king_in_check = False
         self.enpassant_possible = False
         self.pieces_list = []
         self.squares_list = []
+        self.squares_under_attack = []
     
     def create_board(self, rows, columns):
         for i in range(2):
@@ -21,21 +23,21 @@ class Board():
             pawn_row = ((6,1) [even])
             other_row = ((7,0) [even])
             
-            self.pieces_list.append(queen.Queen(piece_color+"_queen", other_row, 3, piece_color))
-            self.pieces_list.append(king.King(piece_color+"_king", other_row, 4, piece_color))
+            self.pieces_list.append(queen.Queen(piece_color+"_queen", other_row, 3, piece_color, "Queen"))
+            self.pieces_list.append(king.King(piece_color+"_king", other_row, 4, piece_color, "King"))
            
             for j in range(8):
-                self.pieces_list.append(pawn.Pawn(piece_color+"_pawn"+str(j+1), pawn_row, j, piece_color))
+                self.pieces_list.append(pawn.Pawn(piece_color+"_pawn"+str(j+1), pawn_row, j, piece_color, "Pawn"))
                 if j < 2:
                    
                     column = ((0,7) [j%2 ==0])
-                    self.pieces_list.append(rook.Rook(piece_color+"_rook"+str(j+1), other_row, column, piece_color))
+                    self.pieces_list.append(rook.Rook(piece_color+"_rook"+str(j+1), other_row, column, piece_color, "Rook"))
                     
                     column = ((1,6) [j%2 ==0])
-                    self.pieces_list.append(knight.Knight(piece_color+"_knight"+str(j+1), other_row, column, piece_color))
+                    self.pieces_list.append(knight.Knight(piece_color+"_knight"+str(j+1), other_row, column, piece_color, "Knight"))
                     
                     column = ((2,5) [j%2 ==0])
-                    self.pieces_list.append(bishop.Bishop(piece_color+"_bishop"+str(j+1), other_row, column, piece_color))
+                    self.pieces_list.append(bishop.Bishop(piece_color+"_bishop"+str(j+1), other_row, column, piece_color, "Bishop"))
                 
         for row in range(rows):
             for column in range(columns):
@@ -116,8 +118,46 @@ class Board():
         active_piece.active = False
         active_piece.alive = False
         self.pieces_list.remove(active_piece)
-        new_piece = queen.Queen(piece_color+"_queen", possible_row, possible_column, piece_color)
+        new_piece = queen.Queen(piece_color+"_queen", possible_row, possible_column, piece_color, "Queen")
         self.pieces_list.append(new_piece)
         new_piece.active = True
         return new_piece
+    
+    def is_king_under_attack(self):
+        for piece in self.pieces_list:
+            if piece.color != self.turn and piece.alive:
+                piece.set_moves(self)
+                for _, _, opposite_piece_under_attack in piece.possible_positions:
+                    if opposite_piece_under_attack:
+                        if opposite_piece_under_attack.piece_type == 'King':
+                            return True
+        return False
 
+    def is_the_square_safe(self, piece, square):
+
+        if self.is_there_piece_on_position(square[0], square[1]):
+            return False
+
+        for opposite_piece in self.pieces_list:
+            #if opposite_piece.row == square[0] and opposite_piece.column == square[1]:
+                #return False
+            
+            if opposite_piece.color != piece.color:
+                #opposite_piece.set_moves(self)
+                #for a_row, a_column, _ in opposite_piece.possible_positions:
+                for square_under_attack in self.squares_under_attack:
+                    if square[0] == square_under_attack.row and square[1] == square_under_attack.column:
+                            return False
+                    """if opposite_piece.piece_type == 'Pawn': # because pawns attack diagonaly
+                        if opposite_piece.color == 'white':
+                            if opposite_piece.row == (row + 1) and (opposite_piece.column == (column - 1) or opposite_piece.column == (column + 1)):
+                                return False       
+                        
+                        if opposite_piece.color == 'black':
+                            if opposite_piece.row == (row - 1) and (opposite_piece.column == (column - 1) or opposite_piece.column == (column + 1)):
+                                return False
+                    
+                    else:
+                        if row == a_row and column == a_column:
+                            return False"""
+        return True 
