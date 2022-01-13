@@ -183,7 +183,7 @@ def update_protecting_pieces(board, our_king, pieces_under_attack):
         while column >=0 and row >= 0:
             piece =  board.get_piece_from_position(row, column)
             if piece: # need to know if there is a piece
-                if our_piece == piece:     # if it is then is it our piece
+                if our_piece == piece:     # if there is then is it our piece
                     if ((piece.row - opposite_piece.row) > 0 and (piece.column - opposite_piece.column) > 0) and (piece.row - opposite_piece.row) == (piece.column - opposite_piece.column):
                         temp_possible_positions = []
                         if piece.piece_type == 'Bishop' or piece.piece_type == 'Queen':
