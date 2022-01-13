@@ -1,11 +1,11 @@
 # colors and thier hex values
 color = {'green' : [0, 128, 0],
-        'faint_green' : [100, 255, 100],  
+        'faint_green' : [100, 150, 100],  
          'dark_red' : [150, 0, 0],
          'red' : [255, 0, 0],
          'black_red' : [201, 82, 82],
          'blue' : [0, 0, 255],
-         'faint_blue' : [100, 100, 255],
+         'faint_purple' : [100, 100, 150],
          'yellow' :[255, 255, 0],
          'faint_yellow' : [165, 255, 0],
          'orange' :[255, 165, 0],  
