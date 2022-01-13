@@ -110,7 +110,7 @@ class Pieces:
         piece = board.get_piece_from_position(row, column)
         if piece.color != self.color:
             self.possible_positions.append([row, column, piece])
-       
+        
     def update_board_objects(self, board):
         for row, column, piece in self.possible_positions:
             if piece:
