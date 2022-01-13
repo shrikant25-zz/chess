@@ -5,4 +5,5 @@ class Square:
         self.color = color
         self.active = False
         self.possible_position = False
+
     
