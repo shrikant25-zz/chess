@@ -1,6 +1,7 @@
 import pygame
 from chessboard import Board
 from cases import *
+cnt =0
 
 class Screen():
     def __init__(self, square_dimensions, rows, columns, window, borderline):
@@ -30,11 +31,15 @@ class Screen():
             square = self.board.get_square_from_position(row, column)
             square.active = True
             active_piece.update_board_objects(self.board)
-            
-    def make_move(self, row, column, active_piece):
+            return True
+        
+        return False
+
+    def make_move(self, row, column, active_piece): #(self, row, column, active_piece, target)
+        
         possible_squares = self.board.get_possible_squares()
         pieces_inpath = self.board.get_pieces_inpath()
-        
+        #possible_row, possible_column, possible_victim = row, column, target
         for possible_row, possible_column, possible_victim in active_piece.possible_positions:           
             if possible_row == row and possible_column == column:        
                 if active_piece.piece_type == 'King':
@@ -52,7 +57,7 @@ class Screen():
                     active_piece.check_if_passed(active_piece, self.board, row, column)
                     if (active_piece.color == "white" and possible_row == 0) or (active_piece.color == "black" and possible_row == 7):
                         active_piece = self.board.promote(active_piece, possible_row, possible_column)
-        
+
                 active_piece.row = row
                 active_piece.column = column
                 
@@ -62,7 +67,7 @@ class Screen():
                 active_piece.possible_positions = []
                 active_piece.set_moves(self.board)
                 self.board.squares_under_attack = []
-               
+                
                 for piece in self.board.pieces_list:
                     if piece.color == self.board.turn and piece.alive:
                         for row, column, _ in piece.possible_positions:
@@ -96,7 +101,7 @@ class Screen():
                                 if square not in self.board.squares_under_attack:
                                     self.board.squares_under_attack.append(square)
                                     #print(f"under attack row : {piece.row+1} column : {piece.column-1} by {piece.name}")
-                                    
+
                 if active_piece.color == 'white':
                     self.board.turn = 'black' 
                 else:
@@ -110,9 +115,8 @@ class Screen():
             square.possible_position = False
 
         active_piece.active = False
-        active_square = self.board.get_active_square()
-        if active_square:
-            active_square.active = False
+        active_square = self.board.get_active_square()  
+        active_square.active = False
         active_piece.possible_positions = []
         self.update_board_display()
 
@@ -127,8 +131,8 @@ class Screen():
     def update_board_display(self):
         for square in self.board.squares_list:
             if square.possible_position is True:
-                square.color = 'faint_blue'
-            if square.color == 'faint_blue' and square.possible_position is False:
+                square.color = 'faint_purple'
+            if square.color == 'faint_purple' and square.possible_position is False:
                 square.color =  (('dark_silver', 'dark_red') [(square.row+square.column) & 1])
             if square.active is True:
                 square.color = 'faint_green'
