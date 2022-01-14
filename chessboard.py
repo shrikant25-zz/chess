@@ -139,25 +139,11 @@ class Board():
             return False
 
         for opposite_piece in self.pieces_list:
-            #if opposite_piece.row == square[0] and opposite_piece.column == square[1]:
-                #return False
             
             if opposite_piece.color != piece.color:
-                #opposite_piece.set_moves(self)
-                #for a_row, a_column, _ in opposite_piece.possible_positions:
+            
                 for square_under_attack in self.squares_under_attack:
                     if square[0] == square_under_attack.row and square[1] == square_under_attack.column:
                             return False
-                    """if opposite_piece.piece_type == 'Pawn': # because pawns attack diagonaly
-                        if opposite_piece.color == 'white':
-                            if opposite_piece.row == (row + 1) and (opposite_piece.column == (column - 1) or opposite_piece.column == (column + 1)):
-                                return False       
-                        
-                        if opposite_piece.color == 'black':
-                            if opposite_piece.row == (row - 1) and (opposite_piece.column == (column - 1) or opposite_piece.column == (column + 1)):
-                                return False
                     
-                    else:
-                        if row == a_row and column == a_column:
-                            return False"""
         return True 

@@ -31,9 +31,5 @@ class King(pieces.Pieces):
                     if not board.black_king_in_check:
                         self.add_castling_info(board)
         
-        #print("in king")
-        #for moves in self.possible_positions:
-            #print(moves)
-        #print("&&&&&&&&")            
-
+      
     

@@ -10,11 +10,6 @@ class Pieces:
         self.color = color
         self.inpath = False
         self.possible_positions = []
-
-    def get_file_rank(self):
-        rank = str(8 - int(self.row))
-        file = chr(ord(str(self.column)) + 49)
-        return file, rank
     
     def diagonal_moves(self,board):
                                         # upwards - left - diagonal
@@ -102,7 +97,6 @@ class Pieces:
                 return 1
         else:
             if not board.is_there_piece_on_position(row, column) and board.is_there_square_on_position(row, column):
-                #print(f"appended row {row} {column}")
                 self.possible_positions.append([row, column, None])
         return 0
     
@@ -149,18 +143,6 @@ class Pieces:
                             rook.moved = True
                             break
 
-            """ 
-                if self.piece_type == 'Rook' and not self.moved:
-                    for pos in castling_positions:
-                        if (pos["side"] == "left" and self.left_castle_possible) or (pos["side"] == "right" and self.right_castle_possible):
-                            if pos["possible_position_rook"][0] == possible_row and pos["possible_position_rook"][1] == possible_column:
-                                king = board.get_piece_from_position(pos["king"][0], pos["king"][1])
-                                if king.moved:
-                                    return
-                            
-                                king.row = pos["possible_position_king"][0]
-                                king.column = pos["possible_position_king"][1]
-                                king.moved = True """
 
         else:    
             if self.piece_type == 'King' and not self.moved:
@@ -174,46 +156,22 @@ class Pieces:
                                         if not board.is_there_piece_on_position(pos["square3"][0], pos["square3"][1]):
                                             self.possible_positions.append([pos["possible_position_king"][0], pos["possible_position_king"][1], None])
                                             self.left_castle_possible = True
-                                            #other_piece.left_castle_possible = True
+                                            
                                 
                                     else:
                                         if pos["side"] == "right":
                                             self.possible_positions.append([pos["possible_position_king"][0], pos["possible_position_king"][1], None])
                                             self.right_castle_possible = True
-                                            #other_piece.right_castle_possible = True
+                                            
 
                                 else:
                                     if pos["side"] == "left":
                                         self.left_castle_possible = False
-                                        #other_piece.left_castle_possible = False
+                                        
                                     
                                     else:
                                         if pos["side"] == "right":
                                             self.right_castle_possible = False
-                                            #other_piece.right_castle_possible = False
+                                            
 
-        """ else:
-                if self.piece_type == 'Rook' and not self.moved:
-                    for pos in castling_positions:
-                        other_piece = board.get_piece_from_position(pos["king"][0], pos["king"][1])
-                        if other_piece:
-                            if other_piece.piece_type == 'King' and other_piece.color == self.color: 
-                                if not other_piece.moved:
-                                    if board.is_the_square_safe(self, pos["square1"]) and board.is_the_square_safe( self, pos["square2"]):
-                                        self.possible_positions.append([pos["possible_position_rook"][0], pos["possible_position_rook"][1], None])
-                                        if pos["side"] == "left":
-                                            self.left_castle_possible = True
-                                            other_piece.left_castle_possible = True
-                                    
-                                        else:
-                                            if pos["side"] == "right":
-                                                self.right_castle_possible = True
-                                                other_piece.right_castle_possible = True
-                                    else:
-                                        if pos["side"] == "left":
-                                            self.left_castle_possible = False
-                                            other_piece.left_castle_possible = False
-                                        else:
-                                            if pos["side"] == "right":
-                                                self.right_castle_possible = False
-                                                other_piece.right_castle_possible = False """
+        

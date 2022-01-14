@@ -38,7 +38,6 @@ def update_moves_of_all_pieces(board):
                             if board.turn == "black":
                                 board.black_king_in_check = True
                         pieces_attacking_king.append(piece)
-                        #our_king = our_piece_under_attack
 
                         path_of_pieces_attacking_king.append([piece.row, piece.column])
 
@@ -110,47 +109,42 @@ def update_moves_of_all_pieces(board):
                                     temp_row += 1
                                     temp_column += 1
 
+    
     for piece in board.pieces_list:
-        if piece.color == board.turn and piece.alive:
-            if piece.piece_type == 'King':
-                piece.possible_positions = []
-                piece.set_moves(board)
-                available_positions_for_king = []
-                for row, column, opposite_piece in piece.possible_positions:
-                    position_available = True
-                    #print(f"possible possible row {row} column {column}")
-                    square = board.get_square_from_position(row, column)
-                    if square in board.squares_under_attack:
-                        #if square.row == row and square.column == column:
-                            #print(f"not possible row {row} column {column}")
-                            position_available = False
-        
-                    if position_available:
-                        #print(f"added position row : {row} column : {column}")
-                        available_positions_for_king.append([row, column,  opposite_piece])
-                piece.possible_positions = available_positions_for_king
-                break
+        if piece.color == board.turn and piece.alive and piece.piece_type == 'King':
+            our_king = piece
+            piece.possible_positions = []
+            piece.set_moves(board)
+            available_positions_for_king = []
+            for row, column, opposite_piece in piece.possible_positions:
+                position_available = True
+                square = board.get_square_from_position(row, column)
+                if square in board.squares_under_attack:
+                        position_available = False
+    
+                if position_available:
+                    available_positions_for_king.append([row, column,  opposite_piece])
+            piece.possible_positions = available_positions_for_king
+            break
 
-    if len(pieces_attacking_king) > 0:
-        if len(pieces_attacking_king) == 1:
-            for piece in board.pieces_list:
-                if piece.color == board.turn and piece.alive:
-                    if piece.piece_type == 'King':
-                        our_king = piece
-                        continue
-                    piece.set_moves(board)
-                    temp_positions = []
-                    for row, column, opposite_piece in piece.possible_positions:
-                        for attacking_row, attacking_column in path_of_pieces_attacking_king:
-                            if row == attacking_row and column == attacking_column:
-                                temp_positions.append([row, column, opposite_piece])
-                    piece.possible_positions = temp_positions
-            
-    else:
+    if len(pieces_attacking_king) == 1:
         for piece in board.pieces_list:
             if piece.color == board.turn and piece.alive:
                 if piece.piece_type == 'King':
-                    our_king = piece
+                    continue
+                piece.set_moves(board)
+                temp_positions = []
+                for row, column, opposite_piece in piece.possible_positions:
+                    for attacking_row, attacking_column in path_of_pieces_attacking_king:
+                        if row == attacking_row and column == attacking_column:
+                            temp_positions.append([row, column, opposite_piece])
+                piece.possible_positions = temp_positions
+        update_protecting_pieces(board, our_king, pieces_under_attack)
+        
+    elif len(pieces_attacking_king) == 0:
+        for piece in board.pieces_list:
+            if piece.color == board.turn and piece.alive:
+                if piece.piece_type == 'King':
                     continue
                 piece.set_moves(board)
                         
@@ -160,7 +154,7 @@ def update_moves_of_all_pieces(board):
             if board.turn == "black":
                 board.black_king_in_check = False
     
-    update_protecting_pieces(board, our_king, pieces_under_attack)
+        update_protecting_pieces(board, our_king, pieces_under_attack)
 
 def generate_piece(board):
     cur_piece = None
