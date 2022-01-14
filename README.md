@@ -1,1 +1,1 @@
-chess engine --currently under construction
+two players chess game
